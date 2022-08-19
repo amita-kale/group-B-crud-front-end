@@ -1,0 +1,4 @@
+<template>
+    <flightmform></flightmform>
+
+</template>
