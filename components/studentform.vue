@@ -35,7 +35,8 @@
                             </td>
                         </tr>
                     </table>
-
+                    <button type="button" class="border-solid rounded border-2 border-indigo-600 p-3 ml-36 mt-3
+                bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Submit</button>
                 </form>
             </div>
             <div class="bg-gray-300 col-span-2">hello
