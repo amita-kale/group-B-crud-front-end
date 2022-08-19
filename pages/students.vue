@@ -1,4 +1,5 @@
 <template>
 
     <studentform></studentform>
+
 </template>
