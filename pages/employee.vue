@@ -1,0 +1,3 @@
+<template>
+  <employeedetails></employeedetails>
+</template>
