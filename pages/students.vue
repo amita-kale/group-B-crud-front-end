@@ -1,3 +1,4 @@
 <template>
+
     <studentform></studentform>
 </template>
