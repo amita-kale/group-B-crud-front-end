@@ -10,7 +10,7 @@
         class="border-2 border-black m-1 rounded-lg"
       />
       <button
-        class="p-1 rounded-lg bg-sky-400 border-2 border border-black text-black w-20"
+        class="p-1 rounded-lg bg-sky-400 border-2  border-black text-black w-20"
         @click="getspecificuser"
       >
         Search
