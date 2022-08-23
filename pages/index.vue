@@ -1,3 +1,4 @@
+
 <template>
     <div>
         <div>
@@ -16,6 +17,7 @@
                 <div class="mt-20 ml-10 h-20 w-52 bg-emerald-400 font-bold flex items-center justify-center">Users</div>
             </div>
             <div class="grid grid-cols-3 text-xl cursor-pointer ">
+
                 <NuxtLink to="/employee">
                     <div class="mt-20 ml-10 h-20 w-52 bg-emerald-400 font-bold flex items-center justify-center">
                         Employees
