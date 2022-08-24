@@ -3,12 +3,10 @@
     <h1 class="font-bold text-center text-2xl mt-10 text-black">
       Product Management
     </h1>
-    <!-- <div class="grid grid-cols-2"> -->
     <div class="border-black border-2 m-8 p-8">
-      <!-- @submit="onFormSubmit1()" -->
-      <form class="border-black rounded-lg border-2 px-12">
+      <form class="bg-blue-300 border-black rounded-lg border-2 px-12">
         <table>
-          <h2 class="text-teal-900 text-xl font-bold pt-6">“Add Product”</h2>
+          <h2 class="text-teal-900 text-xl font-bold pt-6">||Add Product||</h2>
           <hr />
           <label class="pt-10 py-10" for="ProductName">Product Name:</label
           ><br />
@@ -49,7 +47,6 @@
             id="Size"
             ref="size"
           >
-            <option value="XS">XS</option>
             <option value="S">S</option>
             <option value="M" selected>M</option>
             <option value="L">L</option>
@@ -79,7 +76,6 @@
     <div class="border-black border-2 m-8 p-8">
       <table class="list">
         <tr>
-          <!-- <th class="px-4 border-black rounded-lg border-2">id</th> -->
           <th class="px-4 border-black rounded-lg border-4">ProductId</th>
           <th class="px-4 border-black rounded-lg border-4">ProductName</th>
           <th class="px-4 border-black rounded-lg border-4">Price</th>
@@ -89,7 +85,6 @@
           <th class="px-4 border-black rounded-lg border-4">Action</th>
         </tr>
         <tr v-for="item in mydata.allProduct" :key="item.id">
-          <!-- <td class="px-4 border-black rounded-lg border-2">{{item.id=i+1}}</td> -->
           <td class="px-4 border-black rounded-lg border-4">
             {{ item.id }}
           </td>
@@ -126,20 +121,9 @@
         </tr>
       </table>
     </div>
-    <!-- </div> -->
-    <!-- <p>{{ allProduct }}</p> -->
   </div>
 </template>
-<script setup >
-// import { ref } from "vue";
-// const productName = ref("");
-// const price = ref("");
-// const stock = ref("");
-// const size = ref("");
-// const emp_contact = ref("");
-// const emp_salary = ref("");
-// const emp_dept = ref("");
-// const productName =
+<script setup lang="ts">
 const mydata = reactive({
   allProduct: [],
   product: {
@@ -147,9 +131,6 @@ const mydata = reactive({
     price: "",
     stock: "",
     size: "",
-    // emp_contact: '',
-    // emp_salary: '',
-    // emp_dept: '',
   },
 });
 getProductAPI();
@@ -176,7 +157,7 @@ async function onClickOfEditProduct(id) {
     size: "ghjgj" + mydata.allProduct.length,
     image: "91001" + mydata.allProduct.length,
   };
-  // const response = await $fetch('http://localhost:8080/product/' + id, {
+  // const response = await $fetch('http://localhost:3002/product/' + id, {
   //     method: 'PATCH',
   //     body: JSON.stringify(sampleData),
   // });
@@ -185,9 +166,9 @@ async function onClickOfEditProduct(id) {
 }
 // // Delete API
 async function onDeleteOfProduct(id) {
-  // await $fetch('http://localhost:8080/product/' + id, {
-  //     method: 'DELETE'
-  // });
+  await $fetch("http://localhost:3002/product/" + id, {
+    method: "DELETE",
+  });
   getProductAPI();
 }
 </script>
