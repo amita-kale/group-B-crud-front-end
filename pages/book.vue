@@ -131,7 +131,7 @@
                 text-white
                 w-20
               "
-              @click="onDeleteOfProduct(item.id)"
+              @click="onDeleteOfProduct(item.book_id)"
             >
               Delete
             </button>
@@ -169,7 +169,7 @@ getBookAPI();
 // GET API
 async function getBookAPI() {
   mydata.allProduct = await $fetch("http://localhost:3001/book");
-  //   getBookAPI();
+  //getBookAPI();
 }
 // POST API
 async function onFormSubmit1() {
@@ -194,15 +194,15 @@ async function onClickOfEditProduct(id) {
   //     body: JSON.stringify(sampleData),
   // });
   // getBookAPI();
-  getBookAPI();
+  //getBookAPI();
 }
 // // Delete API
-// async function onDeleteOfProduct(id) {
-//   await $fetch("http://localhost:3002/product/" + id, {
-//     method: "DELETE",
-//   });
-//   getProductAPI();
-// }
+async function onDeleteOfProduct(book_id) {
+  await $fetch("http://localhost:3001/book/" + book_id, {
+    method: "DELETE",
+  });
+  getProductAPI();
+}
 </script>
 
 
