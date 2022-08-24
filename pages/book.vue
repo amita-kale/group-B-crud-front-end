@@ -33,8 +33,8 @@
                 <input class="ml-16 border-2 px-32" type="number" v-model="formdata.bookisbn" name="bookisbn" id="bookisbn" @change="validationBookisbn" required>
             </div>
             <div class="p-1  mt-6">
-                <button class="ml-16 border-2 font-bold mr-16 rounded-md bg-black text-blue-500 hover:bg-black hover: text-white p-2 text-center" type="submit" @click="addpro">Add Book</button>
-                <button class="ml-16 border-2 font-bold mr-16 rounded-md bg-black text-blue-500 hover:bg-black  text-white p-2 text-center" type="reset">Reset</button>
+                <button class="ml-16 border-2 font-bold mr-16 rounded-md bg-black text-blue-500 hover:bg-black hover: p-2 text-center" type="submit" @click="addpro">Add Book</button>
+                <button class="ml-16 border-2 font-bold mr-16 rounded-md bg-black text-blue-500 hover:bg-black p-2 text-center" type="reset">Reset</button>
             </div>
         </form>
         <table border="2" class="border-2  bg-gray-100 mr-60 ml-32 p-6 border-solid border-black rounded-md mt-8 ">
@@ -62,7 +62,7 @@
         <div >
             <label class="font-bold text-xl mr-16" for="searchpro">Search Books</label>
             <input @keyup="userFindByAddress(userAddress)" v-model="this.userAddress" class="ml-2 mt-8 border-2 px-32" type="text" name="searchpro" id="searchpro">
-            <!-- <button class=" border-2 font-bold rounded-md bg-red-300 text-blue-500 hover:bg-black  text-white p-2 text-center" type="search" @click="this.userFindByAddress(userAddress)">Search</button> -->
+  
         </div>
         <hr class="border-1 border-black">
         <!-- 2nd table  -->
@@ -84,8 +84,7 @@
                 <td class="border-2  bg-gray-100 p-2 border-solid border-black rounded-md mt-8">{{prod.bookprice}}</td>
                 <td class="border-2  bg-gray-100 p-2 border-solid border-black rounded-md mt-8">{{prod.bookimage}}</td>
                 <td class="border-2  bg-gray-100 p-2 border-solid border-black rounded-md mt-8">{{prod.bookisbn}}</td>
-                <!-- <td class="border-2  bg-gray-100 p-2 border-solid border-black rounded-md mt-8"><button class=" border-2 font-bold rounded-md bg-red-300 text-blue-500 hover:bg-black  text-white p-2 text-center" @click="deletepro(i)">Delete Product</button></td> -->
-                <!-- <td class="border-2  bg-gray-100 p-2 border-solid border-black rounded-md mt-8"><button class=" border-2 font-bold rounded-md bg-red-300 text-blue-500 hover:bg-black  text-white p-2 text-center" @click="editpro(i)">Edit</button></td> -->
+               
             </tr>
         </table>
     </div>
