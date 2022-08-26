@@ -50,11 +50,9 @@
             <option value="S">S</option>
             <option value="M" selected>M</option>
             <option value="L">L</option>
-            <option value="XL">XL</option></select
-          ><br /><br />
-          <label for="Image">Upload Image</label
-          ><br /><br />
-          <input type="file" id="Image" name="Image" /><br /><br />
+            <option value="XL">XL</option></select>
+          <br /><br />
+          
           <div class="mt-10">
             <button
               class="py-1 px-5 mr-5 bg-black hover:bgblack text-white font-bold text-center rounded-md mb-3"
@@ -81,7 +79,6 @@
           <th class="px-4 border-black rounded-lg border-4">Price</th>
           <th class="px-4 border-black rounded-lg border-4">Stock</th>
           <th class="px-4 border-black rounded-lg border-4">Size</th>
-          <th class="px-4 border-black rounded-lg border-4">Image</th>
           <th class="px-4 border-black rounded-lg border-4">Action</th>
         </tr>
         <tr v-for="item in mydata.allProduct" :key="item.id">
@@ -101,9 +98,6 @@
             {{ item.size }}
           </td>
           <td class="px-4 border-black rounded-lg border-4">
-            <img src="{{item.image}}" alt="" srcset="" />
-          </td>
-          <td class="px-4 border-black rounded-lg border-4">
             {{ item.Action }}
             <button
               class="mx-3 rounded-lg bg-red-600 hover:bg-red-700 text-white w-20"
@@ -113,7 +107,7 @@
             </button>
             <button
               class="mx-3 rounded-lg bg-green-600 hover:bg-green-600 text-white w-20"
-              @click="onClickOfEditProduct(item.id)"
+              @click="editProduct(item.id)"
             >
               Edit
             </button>
@@ -147,25 +141,28 @@ async function onFormSubmit1() {
   });
   getProductAPI();
 }
-// // PATCH API
-async function onClickOfEditProduct(id) {
-  const sampleData = {
-    id: id,
-    productName: "Shaktiman" + id,
-    price: "ankita" + mydata.allProduct.length,
-    stock: 200 + mydata.allProduct.length,
-    size: "ghjgj" + mydata.allProduct.length,
-    image: "91001" + mydata.allProduct.length,
-  };
-  // const response = await $fetch('http://localhost:3002/product/' + id, {
-  //     method: 'PATCH',
-  //     body: JSON.stringify(sampleData),
-  // });
-  // getBookAPI();
+// PATCH API
+async function editProduct(id) {
+  console.log("console from patch api");
+  let productEdit = mydata.allProduct.filter((product) => {
+    if ((product.id == id)) {
+      mydata.product.id = product.id;
+      mydata.product.productName = product.productName;
+      mydata.product.price = product.price;
+      mydata.product.stock = product.stock;
+      mydata.product.size = product.size;
+      console.log("patch api");
+    }
+  });
+  console.log(productEdit);
+  const response = await $fetch("http://localhost:3002/product/" + id, {
+    method: "PATCH",
+    body: JSON.stringify(mydata.product),
+  });
   getProductAPI();
 }
 // // Delete API
-async function onDeleteOfProduct(id) {
+async function onDeleteOfProduct(id: string) {
   await $fetch("http://localhost:3002/product/" + id, {
     method: "DELETE",
   });
