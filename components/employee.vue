@@ -1,10 +1,6 @@
 
 
 <template>
-<!-- <div class="flex flex-col justify-center items-center width=300px">
-  <input type="text" name="search" placeholder="search here!" v-model="data.search" class=" text-sm text-black">
-  <button>Products</button>
-</div> -->
 
   <div class=" flex flex-col justify-center items-center width=250px">
 
@@ -32,7 +28,7 @@
          class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"/>
         <!--  :v="v$.salary" -->
               
-        
+        <br/>
         <br/>
       
         <button type="button"   class=" px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md  
@@ -77,10 +73,9 @@ export default{
 </script> -->
 
 <script setup lang="ts">
-let employeedetails;
-let tempId;
-var Edit= false;
-let data= reactive ( { 
+
+//array for storing sampledata
+  let data= reactive ( { 
     EmployeeName : '',
     EmployeeAddress : '',
     contact: '',
@@ -90,45 +85,33 @@ let state = reactive({
   employee: [],  ///allemp state=empp sampledata=data
   
 });
-// GETAPI
+
 getEmployeeApi();
+
 async function getEmployeeApi(){
   console.log("get a api call");
   state.employee = await $fetch("http://localhost:3001/emp/details");
 
-}//working
+}
+//getallworking properly
 
-// POSTAPI/PATCH
+// post api
 async function SubmitForm() {
-  if(Edit==false){
-  await $fetch("http://localhost:3001/emp/details/",{
+  await $fetch("http://localhost:3001/emp/details/",
+  {
     method: 'POST',
     body: (data),
   }); 
-   getEmployeeApi();
-
-  }
-  if(Edit==true){
-     console.log(employeedetails);
-  const response = await $fetch("http://localhost:3001/emp/details/" + tempId,{
-      method: "PATCH",
-      body: (data),
-    }
-  );
-  Edit=false;
-   getEmployeeApi();
-  }
   getEmployeeApi();
-}//working
+  
+}
 
 
 //Patch api
 // yet to work
 async function EditForm(id) {
-  Edit=true;
-  tempId = id;
- employeedetails = state.employee.filter((emp) => {
-    if (id == emp.id) {
+  let employeedetails = state.employee.filter((emp) => {
+    if (emp.id == id) {
       data.EmployeeName = emp.EmployeeName;
       data.EmployeeAddress = emp.EmployeeAddress;
       data.contact = emp.contact;
@@ -136,8 +119,15 @@ async function EditForm(id) {
       return emp;
     }
   });
- 
-    getEmployeeApi();
+  console.log(employeedetails);
+  const response = await $fetch(
+    "http://localhost:3001/emp/update/" + id,
+    {
+      method: "PATCH",
+      body: data,
+    }
+  );
+  getEmployeeApi();
 }
 
 
@@ -146,10 +136,11 @@ async function EditForm(id) {
 async function DeleteForm(id) {
  await $fetch("http://localhost:3001/emp/details/"+ id, {
   method:'DELETE',
+ 
   });
-  Edit=false;
   getEmployeeApi();  
-}//working  
+  
+}
 
 
 // const validate = {
@@ -159,9 +150,14 @@ async function DeleteForm(id) {
 //   salary:{required, salary},
 // };
 // const v$ = useVuelidate(validate, state.employee);
+</script>
 
 
-// async function EditForm(id: string) 
+
+
+
+
+ /////async function EditForm(id: string) 
 // {
 //       let editspecificfeild = await $fetch("http://localhost:3001/emp/details/" +id );
 //       console.log("updation :",editspecificfeild);
@@ -171,14 +167,15 @@ async function DeleteForm(id) {
 //       data.EmployeeAddress = editspecificfeild.EmployeeAddress;
 //       data.contact = editspecificfeild.contact;
 //       data.salary = editspecificfeild.salary;
-     
+//       data.department = editspecificfeild.department;
+
 //       const tobeeditdata = {
 //       // id: data.id,
 //         EmployeeName : data.EmployeeName,
 //         EmployeeAddress : data.EmployeeAddress,
 //         contact : data.contact,
 //         salary: data.salary,
-       
+//         department : data.department
 
 //       };
 //       if(Edit == true){
@@ -192,15 +189,5 @@ async function DeleteForm(id) {
 //           getEmployeeApi();
            
 // }
-
-
-</script>
-
-
-
-
-
-
- 
 
 
