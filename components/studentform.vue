@@ -5,7 +5,7 @@
         <div class="grid gap-x-7  grid-cols-3 h-screen">
             <div
                 class="border-solid border-2 border-amber-600 drop-shadow-md bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 ">
-                <form>
+                <form class="space-y-6">
                     <h1 style="color: red" class="font-bold text-3xl p-6">Add Students</h1>
                     <table>
 
@@ -13,7 +13,14 @@
                             <td><label>Full Name:</label></td>
                             <td><input type="text"
                                     class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
-                                    v-model="state.student.full_name"></td>
+                                    v-model="state.student.full_name" :v="v$.full_name">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.full_name.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td><label>Email :</label></td>
@@ -22,15 +29,50 @@
                                     v-model="state.student.email"></td>
                         </tr>
                         <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.email.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr>
+                        <tr>
                             <td><label>Contact</label></td>
                             <td><input type="number"
                                     class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
                                     v-model="state.student.contact"></td>
                         </tr>
                         <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.contact.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr>
+                        <tr>
                             <td><label>Address</label></td>
                             <td><textarea class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
                                     v-model="state.student.address"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.address.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>Subject</label></td>
+                            <td><select class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
+                                    v-model="state.student.subject" multiple>
+                                    <option>HTML</option>
+                                    <option>CSS</option>
+                                    <option>Javascript</option>
+                                </select>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.subject.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
                             </td>
                         </tr>
                         <!-- <tr>
@@ -56,6 +98,7 @@
                         <th class="border border-slate-300">Email</th>
                         <th class="border border-slate-300">Contact</th>
                         <th class="border border-slate-300">Address</th>
+                        <th class="border border-slate-300">Subject</th>
                         <!-- <th class="border border-slate-300">StudentProfile</th> -->
                         <th colspan="2" class="border border-slate-300">Action</th>
 
@@ -67,6 +110,7 @@
                         <td class="border border-slate-300">{{ stud.email }}</td>
                         <td class="border border-slate-300">{{ stud.contact }}</td>
                         <td class="border border-slate-300">{{ stud.address }}</td>
+                        <td class="border border-slate-300">{{ stud.subject }}</td>
                         <!-- <td class="border border-slate-300"><a>{{ stud.student_profile }}</a></td> -->
                         <td class="border border-slate-300">
                             <button class="
@@ -106,6 +150,23 @@
     </div>
 </template>
 
+
+<script lang="ts">
+import useVuelidate, {
+    minLength,
+    numeric,
+    required,
+    maxLength,
+    email,
+    alpha
+
+} from '~/utils/vuelidate/useVuelidate';
+
+export default {
+    name: 'LoginPage',
+};
+</script>
+
 <script setup lang="ts">
 
 let state = reactive({
@@ -116,43 +177,85 @@ let state = reactive({
         email: null,
         contact: null,
         address: null,
+        subject: null
         // student_profile: null
     }
-
 });
+
+/**
+   * validation rules
+   */
+const rules = {
+    full_name: { required, alpha, minLength: minLength(3) },
+    email: { required, email },
+    contact: { required, numeric, minLength: minLength(10), maxLength: maxLength(10) },
+    address: { required },
+    subject: { required }
+};
+
+
+const v$ = useVuelidate(rules, state.student);
 
 var isEdit: boolean = false;
 
 getStudentsAPI();
 // Get API
 async function getStudentsAPI() {
-    console.log("GEt APIT call");
+    console.log("Get API call");
     state.students = await $fetch('http://localhost:3002/student');
-
 }
 
+function submitFormValues() {
+    console.log("submit click");
+    state.students.push(state.student);
+}
 //PUT and POST API
-async function submitFormValues() {
-    const payload = state.student;
-    const studentId = payload.student_id;
-    delete payload.student_id;
-    if (isEdit === true) {
-        await $fetch('http://localhost:3002/student/' + studentId, {
-            method: 'PUT',
-            body: JSON.stringify(payload)
-        });
-        isEdit = false;
-    } else {
+// async function submitFormValues() {
+//     console.log("submit click");
 
-        await $fetch('http://localhost:3002/student', {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        });
-    }
+//     const payload = state.student;
+//     const studentId = payload.student_id;
+//     delete payload.student_id;
+//     if (isEdit === true) {
+//         const result = await v$.value.$validate();
+//         if (result) {
+//             alert("data stored sucessfully");
+//         }
+//         else {
+//             alert("Invalid data");
+//         }
+//         await $fetch('http://localhost:3002/student/' + studentId, {
+//             method: 'PUT',
+//             body: JSON.stringify(payload)
+//         });
+//         isEdit = false;
+//     } else {
+//         const result = await v$.value.$validate();
+//         if (result) {
+//             alert("data stored sucessfully");
+//         }
+//         else {
+//             alert("Invalid data");
+//         }
+//         // await $fetch('http://localhost:3002/student', {
+//         //     method: 'POST',
+//         //     body: JSON.stringify(payload)
+//         // });
+//        
 
-    getStudentsAPI();
+//     }
+//     getStudentsAPI();
+//     state.student = {
+//         student_id: '',
+//         full_name: '',
+//         email: '',
+//         contact: '',
+//         address: '',
+//         subject: ''
+//         // student_profile: null
+//     }
 
-}
+// }
 
 async function editFormValues(i) {
     console.log(i);
@@ -171,6 +274,8 @@ async function deleteFormValues(index) {
 }
 
 </script>
+
+
 
 
 
