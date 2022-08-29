@@ -1,5 +1,5 @@
 <template>
-  <div class=" flex flex-col justify-center items-center width=250px">
+  <div class=" flex flex-col justify-center items-center width=250px w-full">
     <div>
       <div>Ticket
         <input type="number" v-model="data.flightData.ticket"
@@ -19,32 +19,39 @@
           placeholder="Destination" /><span v-for="error in v$.Destination.$errors" :key="error.$uid"
           class="text-red-500">{{ error.$message }}</span>
       </div>
-      <div><button @click="alldata">Get All</button></div>
-      <div><button @click="postall">Add</button></div>
+      <div><button @click="alldata" class="mx-3 my-2 p-1  bg-blue-400 hover:bg-green-500 text-white rounded-md">Get
+          All</button></div>
+      <div><button @click="postall"
+          class="mx-3 my-2 p-1  bg-rose-700 hover:bg-amber-500 text-white rounded-md">Add</button></div>
       <div>
-        <input type=" number" v-model="data.flightData.ticket" />
-        <button type="button" @click="getspecifictickets">
+        <input type=" number"
+          class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"
+          v-model="data.flightData.ticket" placeholder="Get Specific Ticket" />
+        <button type="button " class=" mx-3 my-2 p-1 bg-orange-700 hover:bg-black  text-white rounded-md"
+          @click="getspecifictickets">
           Get Specific Ticket
         </button>
       </div>
     </div>
-    <table :item="items" id="showdata" class="flex flex-col justify-center items-center width=250px">
+    <table :item="items" id="showdata" class=" mt-4 flex flex-col justify-center items-center width=250px">
       <tbody>
-        <th class="border-2">Ticket</th>
-        <th class="border-2">Passenger</th>
-        <th class="border-2">Destination</th>
+        <th class="border-2  border-sky-500">Ticket</th>
+        <th class="border-2  border-sky-500">Passenger</th>
+        <th class="border-2  border-sky-500">Destination</th>
 
-        <th class="border-2" colspan="2">Action</th>
+        <th class="border-2  border-sky-500" colspan="2">Action</th>
         <tr v-for="item in state.items" :key="item">
-          <td class="border-2">{{ item.ticket }}</td>
-          <td class="border-2">{{ item.passenger }}</td>
-          <td class="border-2">{{ item.Destination }}</td>
+          <td class="border-2  border-sky-500 mx-4 my-3 p-2">{{ item.ticket }}</td>
+          <td class="border-2  border-sky-500 mx-4 my-3 p-2">{{ item.passenger }}</td>
+          <td class="border-2  border-sky-500 mx-4 my-3 p-2">{{ item.Destination }}</td>
 
-          <td class="border-2">
-            <button @click="editUser(item.ticket)" class="">Edit</button>
+          <td class="border-2 border-sky-500">
+            <button @click="editUser(item.ticket)"
+              class="mx-3 my-2 p-1 bg-green-400 hover:bg-teal-800 text-white rounded-md">Edit</button>
           </td>
-          <td class="border-2">
-            <button @click="deletespecificuser(item.ticket)">Delete</button>
+          <td class="border-2  border-sky-500">
+            <button @click="deletespecificuser(item.ticket)"
+              class="mx-3 my-2 p-1  bg-red-600 hover:bg-gray-800  text-white rounded-md">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -136,6 +143,7 @@ async function getspecifictickets() {
   const response = await $fetch(
     "http://localhost:3001/flight-m/" + data.flightData.ticket
   );
+  state.items = [response]
 }
 async function editUser(id) {
   state.select = false;
