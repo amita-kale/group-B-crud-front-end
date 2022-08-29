@@ -46,6 +46,23 @@
                                     class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
                             </td>
                         </tr>
+
+                        <!-- <tr>
+                            <td><label>Gender :</label></td>
+                            <td><input type="radio" id="gender"
+                                    class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
+                                    v-model="state.student.gender">Male
+                                <input type="radio" id="gender1"
+                                    class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
+                                    v-model="state.student.gender">Female
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.gender.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr> -->
                         <tr>
                             <td><label>Address</label></td>
                             <td><textarea class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
@@ -62,9 +79,10 @@
                             <td><label>Subject</label></td>
                             <td><select class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
                                     v-model="state.student.subject" multiple>
-                                    <option>HTML</option>
-                                    <option>CSS</option>
                                     <option>Javascript</option>
+                                    <option>Vue</option>
+                                    <option>Nuxt</option>
+                                    <option>Nest</option>
                                 </select>
 
                             </td>
@@ -97,8 +115,9 @@
                         <th class="border border-slate-300">FullName</th>
                         <th class="border border-slate-300">Email</th>
                         <th class="border border-slate-300">Contact</th>
+                        <!-- <th class="border border-slate-300">Gender</th> -->
                         <th class="border border-slate-300">Address</th>
-                        <th class="border border-slate-300">Subject</th>
+                        <!-- <th class="border border-slate-300">Subject</th> -->
                         <!-- <th class="border border-slate-300">StudentProfile</th> -->
                         <th colspan="2" class="border border-slate-300">Action</th>
 
@@ -109,8 +128,9 @@
                         <td class="border border-slate-300">{{ stud.full_name }}</td>
                         <td class="border border-slate-300">{{ stud.email }}</td>
                         <td class="border border-slate-300">{{ stud.contact }}</td>
+                        <!-- <td class="border border-slate-300">{{ stud.gender }}</td> -->
                         <td class="border border-slate-300">{{ stud.address }}</td>
-                        <td class="border border-slate-300">{{ stud.subject }}</td>
+                        <!-- <td class="border border-slate-300">{{ stud.subject }}</td> -->
                         <!-- <td class="border border-slate-300"><a>{{ stud.student_profile }}</a></td> -->
                         <td class="border border-slate-300">
                             <button class="
@@ -176,8 +196,10 @@ let state = reactive({
         full_name: null,
         email: null,
         contact: null,
+        //  gender: null,
         address: null,
         subject: null
+
         // student_profile: null
     }
 });
@@ -190,7 +212,8 @@ const rules = {
     email: { required, email },
     contact: { required, numeric, minLength: minLength(10), maxLength: maxLength(10) },
     address: { required },
-    subject: { required }
+    subject: { required },
+    // gender: { required }
 };
 
 
@@ -205,57 +228,54 @@ async function getStudentsAPI() {
     state.students = await $fetch('http://localhost:3002/student');
 }
 
-function submitFormValues() {
-    console.log("submit click");
-    state.students.push(state.student);
-}
+
 //PUT and POST API
-// async function submitFormValues() {
-//     console.log("submit click");
+async function submitFormValues() {
+    console.log("submit click");
 
-//     const payload = state.student;
-//     const studentId = payload.student_id;
-//     delete payload.student_id;
-//     if (isEdit === true) {
-//         const result = await v$.value.$validate();
-//         if (result) {
-//             alert("data stored sucessfully");
-//         }
-//         else {
-//             alert("Invalid data");
-//         }
-//         await $fetch('http://localhost:3002/student/' + studentId, {
-//             method: 'PUT',
-//             body: JSON.stringify(payload)
-//         });
-//         isEdit = false;
-//     } else {
-//         const result = await v$.value.$validate();
-//         if (result) {
-//             alert("data stored sucessfully");
-//         }
-//         else {
-//             alert("Invalid data");
-//         }
-//         // await $fetch('http://localhost:3002/student', {
-//         //     method: 'POST',
-//         //     body: JSON.stringify(payload)
-//         // });
-//        
+    const payload = state.student;
+    const studentId = payload.student_id;
+    delete payload.student_id;
+    if (isEdit === true) {
+        const result = await v$.value.$validate();
+        if (result) {
+            alert("data stored sucessfully");
+        }
+        else {
+            alert("Invalid data");
+        }
+        await $fetch('http://localhost:3002/student/' + studentId, {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+        });
+        isEdit = false;
+    } else {
+        const result = await v$.value.$validate();
+        if (result) {
+            alert("data stored sucessfully");
+        }
+        else {
+            alert("Invalid data");
+        }
+        await $fetch('http://localhost:3002/student', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
 
-//     }
-//     getStudentsAPI();
-//     state.student = {
-//         student_id: '',
-//         full_name: '',
-//         email: '',
-//         contact: '',
-//         address: '',
-//         subject: ''
-//         // student_profile: null
-//     }
 
-// }
+    }
+    getStudentsAPI();
+    state.student = {
+        student_id: '',
+        full_name: '',
+        email: '',
+        contact: '',
+        address: '',
+        subject: ''
+        // student_profile: null
+    }
+
+}
 
 async function editFormValues(i) {
     console.log(i);
