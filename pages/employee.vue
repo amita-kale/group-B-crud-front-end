@@ -1,10 +1,8 @@
 
 
+
+
 <template>
-<!-- <div class="flex flex-col justify-center items-center width=300px">
-  <input type="text" name="search" placeholder="search here!" v-model="data.search" class=" text-sm text-black">
-  <button>Products</button>
-</div> -->
 
   <div class=" flex flex-col justify-center items-center width=250px">
 
@@ -13,24 +11,28 @@
         <label for="EmployeeName">Name :</label>
         <input  type="text"  name="EmployeeName" id="EmployeeName" placeholder="Enter your name" v-model="data.EmployeeName" class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"/>
         <!-- :v="v$.EmployeeName" -->
+        <span v-for="error in v$.EmployeeName.$errors" :key="error.$uid" class="text-blue-500" >{{ error.$message }}</span>
         <br/>
         
         <label for="EmployeeAddress">Address :</label>
         <input  type="text"  name="EmployeeAddress" placeholder="Enter your Address " id="EmployeeAddress" v-model="data.EmployeeAddress"
         class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2">
         <!-- :v="v$.EmployeeAddress" -->
+        <span v-for="error in v$.EmployeeAddress.$errors" :key="error.$uid" class="text-blue-500">{{ error.$message }}</span>
         <br/>
 
         <label for="contact" >Contact :</label>
         <input  type="text"  id="contact" name="contact" placeholder="Enter your Contact" v-model="data.contact"
         class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"/>
         <!-- :v="v$.contact"  -->
+        <span v-for="error in v$.contact.$errors" :key="error.$uid" class="text-blue-500" >{{ error.$message }}</span>
               
         <br/>
         <label for="salary" >Salary :</label>
         <input  type="text" id="salary" name="salary" placeholder="Enter amount in Rs." v-model="data.salary"
          class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"/>
         <!--  :v="v$.salary" -->
+        <span v-for="error in v$.salary.$errors" :key="error.$uid" class="text-blue-500">{{ error.$message }}</span>
               
         
         <br/>
@@ -67,16 +69,19 @@
   </div>
 </template>
 
-<!-- <script lang="ts">
-import useVuelidate,{
-  required, EmployeeName, EmployeeAddress, contact, salary,
-}from '~/utils/vuelidate/useVuelidate';
-export default{
+<script lang="ts">
+import useVuelidate,{ required, minLength, maxLength}from '~/utils/vuelidate/useVuelidate';
+export default {
   name:'empform',
 }
-</script> -->
+</script> 
 
 <script setup lang="ts">
+
+// import useVuelidate from "@vuelidate/core";
+// import { maxLength, minLength, required } from "@vuelidate/validators";
+
+
 let employeedetails;
 let tempId;
 var Edit= false;
@@ -86,8 +91,9 @@ let data= reactive ( {
     contact: '',
     salary: ''
   });
+
 let state = reactive({
-  employee: [],  ///allemp state=empp sampledata=data
+  employee: [],  
   
 });
 // GETAPI
@@ -98,9 +104,13 @@ async function getEmployeeApi(){
 
 }//working
 
-// POSTAPI/PATCH
+// POSTAPI /PATCHAPI
 async function SubmitForm() {
   if(Edit==false){
+    const result = await v$.value.$validate();
+    if(result){
+      console.log("validate");
+    }
   await $fetch("http://localhost:3001/emp/details/",{
     method: 'POST',
     body: (data),
@@ -110,7 +120,7 @@ async function SubmitForm() {
   }
   if(Edit==true){
      console.log(employeedetails);
-  const response = await $fetch("http://localhost:3001/emp/details/" + tempId,{
+     await $fetch("http://localhost:3001/emp/details/" + tempId,{
       method: "PATCH",
       body: (data),
     }
@@ -122,12 +132,11 @@ async function SubmitForm() {
 }//working
 
 
-//Patch api
-// yet to work
+//PATCH API
 async function EditForm(id) {
   Edit=true;
   tempId = id;
- employeedetails = state.employee.filter((emp) => {
+  employeedetails = state.employee.filter((emp:any) => {
     if (id == emp.id) {
       data.EmployeeName = emp.EmployeeName;
       data.EmployeeAddress = emp.EmployeeAddress;
@@ -136,13 +145,9 @@ async function EditForm(id) {
       return emp;
     }
   });
- 
-    getEmployeeApi();
+    getEmployeeApi(); 
 }
-
-
-
-//deleteapi
+//DELETE API
 async function DeleteForm(id) {
  await $fetch("http://localhost:3001/emp/details/"+ id, {
   method:'DELETE',
@@ -151,52 +156,39 @@ async function DeleteForm(id) {
   getEmployeeApi();  
 }//working  
 
+let details= {
+  emp:{ 
+    EmployeeName : '',
+    EmployeeAddress : '',
+    contact: '',
+    salary: ''
+  }};
 
-// const validate = {
-//   EmployeeName: {require , EmployeeName},
-//   EmployeeAddress :{require, EmployeeAddress},
-//   contact:{required, contact},
-//   salary:{required, salary},
-// };
-// const v$ = useVuelidate(validate, state.employee);
-
-
-// async function EditForm(id: string) 
-// {
-//       let editspecificfeild = await $fetch("http://localhost:3001/emp/details/" +id );
-//       console.log("updation :",editspecificfeild);
-//       //alert(editspecificfeild.id);
-//      // data.id = editspecificfeild.id;
-//       data.EmployeeName = editspecificfeild.EmployeeName;
-//       data.EmployeeAddress = editspecificfeild.EmployeeAddress;
-//       data.contact = editspecificfeild.contact;
-//       data.salary = editspecificfeild.salary;
-     
-//       const tobeeditdata = {
-//       // id: data.id,
-//         EmployeeName : data.EmployeeName,
-//         EmployeeAddress : data.EmployeeAddress,
-//         contact : data.contact,
-//         salary: data.salary,
-       
-
-//       };
-//       if(Edit == true){
-//         const response = await $fetch("http://localhost:3001/emp/update/"+ id,{
-//           method : 'PATCH',
-//           body : JSON.stringify(tobeeditdata),
-//        })
-//       }
-    
-//          // Edit= false;
-//           getEmployeeApi();
-           
-// }
-
+const rules = {
+  EmployeeName: {
+    required,
+    minLength: minLength(2),
+    maxLength: maxLength(3),
+  },
+  EmployeeAddress: {
+    required, 
+    minLength: minLength(3),
+    maxLength: maxLength(5)
+  },
+  contact: {
+    required,
+    minLength: minLength(3),
+    maxLength: maxLength(5)
+  },
+  salary: {
+    required,
+    minLength: minLength(3),
+    maxLength: maxLength(5)
+  }
+}
+const v$ = useVuelidate(rules, details.emp);
 
 </script>
-
-
 
 
 
