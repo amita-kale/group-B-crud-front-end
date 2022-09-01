@@ -9,31 +9,39 @@
     <h2 class="flex flex-col justify-center items-center">Employee Details</h2>
       <form name="empform" method="POST" >
         <label for="EmployeeName">Name :</label>
-        <input  type="text"  name="EmployeeName" id="EmployeeName" placeholder="Enter your name" v-model="data.EmployeeName" class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"/>
+        <input  type="text"  name="EmployeeName" id="EmployeeName" placeholder="Enter your name" v-model="data.EmployeeName" 
+        class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2" :v="v$.EmployeeName.$errors" >
         <!-- :v="v$.EmployeeName" -->
         <span v-for="error in v$.EmployeeName.$errors" :key="error.$uid" class="text-blue-500" >{{ error.$message }}</span>
         <br/>
         
         <label for="EmployeeAddress">Address :</label>
         <input  type="text"  name="EmployeeAddress" placeholder="Enter your Address " id="EmployeeAddress" v-model="data.EmployeeAddress"
-        class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2">
+        class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2" :v="v$.EmployeeAddress.$errors">
         <!-- :v="v$.EmployeeAddress" -->
-        <span v-for="error in v$.EmployeeAddress.$errors" :key="error.$uid" class="text-blue-500">{{ error.$message }}</span>
+        <span v-for="error in v$.EmployeeAddress.$errors" :key="error.$uid" class="text-blue-500">{{error.$message}}</span>
         <br/>
 
         <label for="contact" >Contact :</label>
         <input  type="text"  id="contact" name="contact" placeholder="Enter your Contact" v-model="data.contact"
-        class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"/>
+        class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2" :v="v$.contact.$errors">
         <!-- :v="v$.contact"  -->
         <span v-for="error in v$.contact.$errors" :key="error.$uid" class="text-blue-500" >{{ error.$message }}</span>
               
         <br/>
         <label for="salary" >Salary :</label>
         <input  type="text" id="salary" name="salary" placeholder="Enter amount in Rs." v-model="data.salary"
-         class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2"/>
+         class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2" :v="v$.salary.$errors">
         <!--  :v="v$.salary" -->
         <span v-for="error in v$.salary.$errors" :key="error.$uid" class="text-blue-500">{{ error.$message }}</span>
-              
+         <br/>
+         
+          <select class="text-sm text-gray-base w-full  mr-3 py-5 px-4 h-2 border  border-gray-200 rounded mb-2" v-model="data.department" multiple>Department
+            <options>Finance</options>
+            <options>Testing</options>
+            <options>Software Development</options>
+            <options>HR</options>
+          </select>    
         
         <br/>
       
@@ -70,17 +78,13 @@
 </template>
 
 <script lang="ts">
-import useVuelidate,{ required, minLength, maxLength}from '~/utils/vuelidate/useVuelidate';
+import useVuelidate,{ required, minLength, maxLength,helpers}from '~/utils/vuelidate/useVuelidate';
 export default {
   name:'empform',
 }
 </script> 
 
 <script setup lang="ts">
-
-// import useVuelidate from "@vuelidate/core";
-// import { maxLength, minLength, required } from "@vuelidate/validators";
-
 
 let employeedetails;
 let tempId;
@@ -89,7 +93,8 @@ let data= reactive ( {
     EmployeeName : '',
     EmployeeAddress : '',
     contact: '',
-    salary: ''
+    salary: '',
+    department: ''
   });
 
 let state = reactive({
@@ -163,27 +168,33 @@ let details= {
     contact: '',
     salary: ''
   }};
-
+const errormessage = (value: any) => {
+  return value.includes("err-msg");
+};
 const rules = {
   EmployeeName: {
     required,
     minLength: minLength(2),
     maxLength: maxLength(3),
+    //errormessage: helpers.withMessage("Name is required", errormessage),
   },
   EmployeeAddress: {
     required, 
     minLength: minLength(3),
-    maxLength: maxLength(5)
+    maxLength: maxLength(5),
+    //errormessage: helpers.withMessage("Address is required", errormessage),
   },
   contact: {
     required,
     minLength: minLength(3),
-    maxLength: maxLength(5)
+    maxLength: maxLength(5),
+    //errormessage: helpers.withMessage("Contact is required", errormessage),
   },
   salary: {
     required,
     minLength: minLength(3),
-    maxLength: maxLength(5)
+    maxLength: maxLength(5),
+    //errormessage: helpers.withMessage("Salary is required", errormessage),
   }
 }
 const v$ = useVuelidate(rules, details.emp);
