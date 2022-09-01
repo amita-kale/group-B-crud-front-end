@@ -5,7 +5,7 @@
         <div class="grid gap-x-7  grid-cols-3 h-screen">
             <div
                 class="border-solid border-2 border-amber-600 drop-shadow-md bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 ">
-                <form>
+                <form class="space-y-6">
                     <h1 style="color: red" class="font-bold text-3xl p-6">Add Students</h1>
                     <table>
 
@@ -13,7 +13,14 @@
                             <td><label>Full Name:</label></td>
                             <td><input type="text"
                                     class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
-                                    v-model="state.student.full_name"></td>
+                                    v-model="state.student.full_name" :v="v$.full_name">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.full_name.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td><label>Email :</label></td>
@@ -22,17 +29,71 @@
                                     v-model="state.student.email"></td>
                         </tr>
                         <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.email.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr>
+                        <tr>
                             <td><label>Contact</label></td>
                             <td><input type="number"
                                     class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
                                     v-model="state.student.contact"></td>
                         </tr>
                         <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.contact.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr>
+
+                        <!-- <tr>
+                            <td><label>Gender :</label></td>
+                            <td><input type="radio" id="gender"
+                                    class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
+                                    v-model="state.student.gender">Male
+                                <input type="radio" id="gender1"
+                                    class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
+                                    v-model="state.student.gender">Female
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.gender.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr> -->
+                        <tr>
                             <td><label>Address</label></td>
                             <td><textarea class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
                                     v-model="state.student.address"></textarea>
                             </td>
                         </tr>
+                        <tr>
+                            <td></td>
+                            <td><span v-for="error in v$.address.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>Subject</label></td>
+                            <td>
+                                <select class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
+                                    v-model="state.subject_id" multiple="true">
+                                    <option v-for="sub in state.subjects" :key="sub.subject_id" :value="sub.subject_id">
+                                        {{ sub.subject_id }} {{ sub.sub_name }}
+                                    </option>
+
+                                </select>
+                                {{ state.subject_id }}
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td>{{ state.subject1 }}</td>
+                            <td><span v-for="error in v$.subject.$errors" :key="error.$uid"
+                                    class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
+                            </td>
+                        </tr> -->
                         <!-- <tr>
                             <td><label>Student Profile:</label></td>
                             <td><input type="file"
@@ -55,7 +116,9 @@
                         <th class="border border-slate-300">FullName</th>
                         <th class="border border-slate-300">Email</th>
                         <th class="border border-slate-300">Contact</th>
+                        <!-- <th class="border border-slate-300">Gender</th> -->
                         <th class="border border-slate-300">Address</th>
+                        <!-- <th class="border border-slate-300">SubjectID</th> -->
                         <!-- <th class="border border-slate-300">StudentProfile</th> -->
                         <th colspan="2" class="border border-slate-300">Action</th>
 
@@ -66,7 +129,9 @@
                         <td class="border border-slate-300">{{ stud.full_name }}</td>
                         <td class="border border-slate-300">{{ stud.email }}</td>
                         <td class="border border-slate-300">{{ stud.contact }}</td>
+                        <!-- <td class="border border-slate-300">{{ stud.gender }}</td> -->
                         <td class="border border-slate-300">{{ stud.address }}</td>
+                        <!-- <td class="border border-slate-300"> {{ state.subjectid }}</td> -->
                         <!-- <td class="border border-slate-300"><a>{{ stud.student_profile }}</a></td> -->
                         <td class="border border-slate-300">
                             <button class="
@@ -106,6 +171,23 @@
     </div>
 </template>
 
+
+<script lang="ts">
+import useVuelidate, {
+    minLength,
+    numeric,
+    required,
+    maxLength,
+    email,
+    alpha
+
+} from '~/utils/vuelidate/useVuelidate';
+
+export default {
+    name: 'LoginPage',
+};
+</script>
+
 <script setup lang="ts">
 
 let state = reactive({
@@ -115,49 +197,148 @@ let state = reactive({
         full_name: null,
         email: null,
         contact: null,
+        //  gender: null,
+        // subjectid: null,
         address: null,
         // student_profile: null
-    }
-
+    },
+    subjects: [],
+    subject_id: []
 });
 
+/**
+   * validation rules
+   */
+const rules = {
+    full_name: { required, alpha, minLength: minLength(3) },
+    email: { required, email },
+    contact: { required, numeric, minLength: minLength(10), maxLength: maxLength(10) },
+    address: { required },
+    // subject: { required },
+    // gender: { required }
+};
+
+
+const v$ = useVuelidate(rules, state.student);
+var id: number;
 var isEdit: boolean = false;
+var studId: number;
 
 getStudentsAPI();
 // Get API
 async function getStudentsAPI() {
-    console.log("GEt APIT call");
+    console.log("Get API call");
     state.students = await $fetch('http://localhost:3002/student');
 
+
+}
+
+getSubjectsAPI();
+// Get API
+async function getSubjectsAPI() {
+    state.subjects = await $fetch('http://localhost:3002/subject');
+    console.log(state.subjects);
+}
+
+//post only subID
+async function submitSubId(id) {
+    console.log("dropdown click" + id);
+    // await $fetch('http://localhost:3002/studsub', {
+    //     method: 'POST',
+    //     body: JSON.stringify(id)
+    // });
 }
 
 //PUT and POST API
 async function submitFormValues() {
+    // alert(state.student.student_id);
+    console.log("submit click");
     const payload = state.student;
+    console.log(payload);
     const studentId = payload.student_id;
     delete payload.student_id;
     if (isEdit === true) {
+        const result = await v$.value.$validate();
+        if (result) {
+            alert("Invalid data info");
+        }
+        else {
+            alert("store successfully");
+        }
         await $fetch('http://localhost:3002/student/' + studentId, {
-            method: 'PUT',
+            method: 'PATCH',
             body: JSON.stringify(payload)
+        }).then((res) => {
+            alert("student information edited");
         });
         isEdit = false;
     } else {
+        const result = await v$.value.$validate();
+        if (result) {
+            alert("data stored sucessfully");
 
+        }
+        else {
+            alert("Invalid data");
+        }
         await $fetch('http://localhost:3002/student', {
             method: 'POST',
             body: JSON.stringify(payload)
-        });
+        }).then((res) => {
+            console.log("id", res.student_id);
+            studId = res.student_id;
+            relationalTableValues();
+        })
+
+    }
+
+
+    async function relationalTableValues() {
+        console.log("studentId", studId);
+        console.log(state.subject_id);
+        state.subject_id.forEach((subid) => {
+            const obj = {
+                student: studId,
+                subject: subid
+            }
+            var response = $fetch('http://localhost:3002/student/studsub', {
+                method: 'POST',
+                body: JSON.stringify(obj)
+            }).then((res) => {
+                console.log("data", obj);
+                // studId = res.student_id;
+            })
+        })
+
     }
 
     getStudentsAPI();
+    state.student = {
+        student_id: '',
+        full_name: '',
+        email: '',
+        contact: '',
+        address: '',
+
+        // student_profile: null
+    }
 
 }
 
 async function editFormValues(i) {
     console.log(i);
+    // let specificStudent = await $fetch('http://localhost:3002/student/' + i);
+
     state.student = Object.assign({}, state.students[i]);
     isEdit = true;
+
+    // let specificStudent = await $fetch('http://localhost:3002/student/' + i);
+
+    // // state.student = Object.assign({}, state.students[i]);
+    // state.student.full_name = specificStudent.full_name;
+    // state.student.email = specificStudent.email;
+    // state.student.contact = specificStudent.contact;
+    // state.student.address = specificStudent.address;
 
 }
 
@@ -171,6 +352,8 @@ async function deleteFormValues(index) {
 }
 
 </script>
+
+
 
 
 
