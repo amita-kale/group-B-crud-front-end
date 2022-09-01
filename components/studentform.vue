@@ -77,22 +77,23 @@
                         </tr>
                         <tr>
                             <td><label>Subject</label></td>
-                            <td><select class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
-                                    v-model="state.student.subject" multiple>
-                                    <option>Javascript</option>
-                                    <option>Vue</option>
-                                    <option>Nuxt</option>
-                                    <option>Nest</option>
-                                </select>
+                            <td>
+                                <select class="bg-white border border-slate-300 rounded-md py-2 pl-9 pr-4 ml-2 mb-2"
+                                    v-model="state.subject_id" multiple="true">
+                                    <option v-for="sub in state.subjects" :key="sub.subject_id" :value="sub.subject_id">
+                                        {{ sub.subject_id }} {{ sub.sub_name }}
+                                    </option>
 
+                                </select>
+                                {{ state.subject_id }}
                             </td>
                         </tr>
-                        <tr>
-                            <td></td>
+                        <!-- <tr>
+                            <td>{{ state.subject1 }}</td>
                             <td><span v-for="error in v$.subject.$errors" :key="error.$uid"
                                     class="text-red-600 text-xs pl-4">{{ error.$message }}</span>
                             </td>
-                        </tr>
+                        </tr> -->
                         <!-- <tr>
                             <td><label>Student Profile:</label></td>
                             <td><input type="file"
@@ -117,7 +118,7 @@
                         <th class="border border-slate-300">Contact</th>
                         <!-- <th class="border border-slate-300">Gender</th> -->
                         <th class="border border-slate-300">Address</th>
-                        <!-- <th class="border border-slate-300">Subject</th> -->
+                        <!-- <th class="border border-slate-300">SubjectID</th> -->
                         <!-- <th class="border border-slate-300">StudentProfile</th> -->
                         <th colspan="2" class="border border-slate-300">Action</th>
 
@@ -130,7 +131,7 @@
                         <td class="border border-slate-300">{{ stud.contact }}</td>
                         <!-- <td class="border border-slate-300">{{ stud.gender }}</td> -->
                         <td class="border border-slate-300">{{ stud.address }}</td>
-                        <!-- <td class="border border-slate-300">{{ stud.subject }}</td> -->
+                        <!-- <td class="border border-slate-300"> {{ state.subjectid }}</td> -->
                         <!-- <td class="border border-slate-300"><a>{{ stud.student_profile }}</a></td> -->
                         <td class="border border-slate-300">
                             <button class="
@@ -197,11 +198,12 @@ let state = reactive({
         email: null,
         contact: null,
         //  gender: null,
+        // subjectid: null,
         address: null,
-        subject: null
-
         // student_profile: null
-    }
+    },
+    subjects: [],
+    subject_id: []
 });
 
 /**
@@ -212,47 +214,69 @@ const rules = {
     email: { required, email },
     contact: { required, numeric, minLength: minLength(10), maxLength: maxLength(10) },
     address: { required },
-    subject: { required },
+    // subject: { required },
     // gender: { required }
 };
 
 
 const v$ = useVuelidate(rules, state.student);
-
+var id: number;
 var isEdit: boolean = false;
+var studId: number;
 
 getStudentsAPI();
 // Get API
 async function getStudentsAPI() {
     console.log("Get API call");
     state.students = await $fetch('http://localhost:3002/student');
+
+
 }
 
+getSubjectsAPI();
+// Get API
+async function getSubjectsAPI() {
+    state.subjects = await $fetch('http://localhost:3002/subject');
+    console.log(state.subjects);
+}
+
+//post only subID
+async function submitSubId(id) {
+    console.log("dropdown click" + id);
+    // await $fetch('http://localhost:3002/studsub', {
+    //     method: 'POST',
+    //     body: JSON.stringify(id)
+    // });
+}
 
 //PUT and POST API
 async function submitFormValues() {
+    // alert(state.student.student_id);
     console.log("submit click");
-
     const payload = state.student;
+    console.log(payload);
     const studentId = payload.student_id;
     delete payload.student_id;
     if (isEdit === true) {
         const result = await v$.value.$validate();
         if (result) {
-            alert("data stored sucessfully");
+            alert("Invalid data info");
         }
         else {
-            alert("Invalid data");
+            alert("store successfully");
         }
         await $fetch('http://localhost:3002/student/' + studentId, {
-            method: 'PUT',
+            method: 'PATCH',
             body: JSON.stringify(payload)
+        }).then((res) => {
+            alert("student information edited");
         });
         isEdit = false;
     } else {
         const result = await v$.value.$validate();
         if (result) {
             alert("data stored sucessfully");
+
         }
         else {
             alert("Invalid data");
@@ -260,10 +284,34 @@ async function submitFormValues() {
         await $fetch('http://localhost:3002/student', {
             method: 'POST',
             body: JSON.stringify(payload)
-        });
-
+        }).then((res) => {
+            console.log("id", res.student_id);
+            studId = res.student_id;
+            relationalTableValues();
+        })
 
     }
+
+
+    async function relationalTableValues() {
+        console.log("studentId", studId);
+        console.log(state.subject_id);
+        state.subject_id.forEach((subid) => {
+            const obj = {
+                student: studId,
+                subject: subid
+            }
+            var response = $fetch('http://localhost:3002/student/studsub', {
+                method: 'POST',
+                body: JSON.stringify(obj)
+            }).then((res) => {
+                console.log("data", obj);
+                // studId = res.student_id;
+            })
+        })
+
+    }
+
     getStudentsAPI();
     state.student = {
         student_id: '',
@@ -271,7 +319,7 @@ async function submitFormValues() {
         email: '',
         contact: '',
         address: '',
-        subject: ''
+
         // student_profile: null
     }
 
@@ -279,8 +327,18 @@ async function submitFormValues() {
 
 async function editFormValues(i) {
     console.log(i);
+    // let specificStudent = await $fetch('http://localhost:3002/student/' + i);
+
     state.student = Object.assign({}, state.students[i]);
     isEdit = true;
+
+    // let specificStudent = await $fetch('http://localhost:3002/student/' + i);
+
+    // // state.student = Object.assign({}, state.students[i]);
+    // state.student.full_name = specificStudent.full_name;
+    // state.student.email = specificStudent.email;
+    // state.student.contact = specificStudent.contact;
+    // state.student.address = specificStudent.address;
 
 }
 
