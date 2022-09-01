@@ -10,11 +10,12 @@
             <h2 class="text-teal-900 text-xl font-bold pt-6">
               Lets Add a Book To Libaray
             </h2>
+
             <table>
               <label class="pt-10 py-10 mt-4" for="id">Book Id</label>
               <input
                 class="border-2 border-black"
-                type="text"
+                type="number"
                 id="book_id"
                 name="book_id"
                 placeholder=""
@@ -95,14 +96,53 @@
                 error.$message
               }}</span>
               <br /><br />
-              <label for="bookidsearch">Your Book</label>
+              <!-- =============================================== -->
+              <!-- <select>
+                <option value="Select Your Category "></option>
+                <option value="">Thriller</option>
+                <option value="">Horror</option>
+                <option value="">Historical</option>
+              </select> -->
+
+              <label for="selectbook">Book Categories :</label>
+              <select
+                name="selectbook"
+                id="selectbook"
+                multiple
+                v-model="formData.book_select"
+                @change="validationSelect"
+                required
+              >
+                <option value="category">Select Book Category</option>
+                <option value="novels">Novels</option>
+                <option value="comics">Comics</option>
+                <option value="scifi">Science Fiction</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="horror">Horror</option>
+                <option value="action">Action</option>
+                <option value="adventure">Adventure</option>
+                <option value="detective">Detective</option>
+                <option value="mystery">Mystery</option>
+                <option value="education">Educational</option>
+                <option value="history">Historical</option>
+                <option value="geographical">Geographical</option>
+                <option value="business">Business</option>
+                <option value="enterpreneurship">Enterpreneurship</option>
+                <option value="fitness">Body Fitness</option>
+                <option value="food">Kitechen Food</option>
+                <option value="spiritual">Spiritual</option>
+              </select>
+
+              <!-- ======================================= -->
+
+              <!-- <label for="bookidsearch">Your Book</label>
               <input
                 class="border-2 border-black"
                 type="text"
                 v-model="formData.book_id"
                 label="bookidsearch"
-              />
-              <button
+              /> -->
+              <!-- <button
                 class="
                   mx-3
                   rounded-lg
@@ -116,28 +156,8 @@
                 @click="getspecificbook"
               >
                 Get Specific Book
-              </button>
+              </button> -->
 
-              <!-- <select name="selectbook" id="selectbook">
-                    <option value="category">Book Category</option>
-                    <option value="novels">Novels</option>
-                    <option value="comics">Comics</option>
-                    <option value="scifi">Science Fiction</option>
-                    <option value="fantasy">Fantasy</option>
-                    <option value="horror">Horror</option>
-                    <option value="action">Action</option>
-                    <option value="adventure">Adventure</option>
-                    <option value="detective">Detective</option>
-                    <option value="mystery">Mystery</option>
-                    <option value="education">Educational</option>
-                    <option value="history">Historical</option>
-                    <option value="geographical">Geographical</option>
-                    <option value="business">Business</option>
-                    <option value="enterpreneurship">Enterpreneurship</option>
-                    <option value="fitness">Body Fitness</option>
-                    <option value="food">Kitechen Food</option>
-                    <option value="spiritual">Spiritual</option>
-                </select>     -->
               <div class="mt-10">
                 <button
                   class="
@@ -173,7 +193,7 @@
                 >
                   Reset
                 </button>
-                <button
+                <!-- <button
                   class="
                     mx-3
                     rounded-lg
@@ -185,7 +205,7 @@
                   @click="getalldata"
                 >
                   get all Books
-                </button>
+                </button> -->
               </div>
             </table>
           </form>
@@ -201,7 +221,7 @@
               <!-- <th class="px-4 border-black rounded-lg border-2">id</th> -->
               <th class="px-4 border-black rounded-lg border-4">Book Name</th>
               <th class="px-4 border-black rounded-lg border-4">Book Author</th>
-              <th class="px-4 border-black rounded-lg border-4">Book Image</th>
+              <!-- <th class="px-4 border-black rounded-lg border-4">Book Image</th> -->
               <th class="px-4 border-black rounded-lg border-4">Book Price</th>
               <th class="px-4 border-black rounded-lg border-4">Book ISbn</th>
               <th class="px-4 border-black rounded-lg border-4">Action</th>
@@ -269,11 +289,11 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 //import { required, minLength, book_id, sameAs, } from "@vuelidate/validators";
 const formData = reactive({
-  book_id: "",
+  book_id: null,
   book_name: "",
   author: "",
   //   book_image: "",
-  price: "",
+  price: null,
   book_isbn: "",
   // addedone line extra as array
 });
@@ -365,7 +385,6 @@ async function editBook(book) {
     (formData.book_isbn = book.book_isbn);
 }
 async function editBookApi(book) {
-  // const response = await fetch("http://localhost:3001/user/" + this.user_id, {
   const response = await $fetch("http://localhost:3001/book/" + book_id.value, {
     method: "PUT",
     headers: {
