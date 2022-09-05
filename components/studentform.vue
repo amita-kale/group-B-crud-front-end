@@ -7,6 +7,11 @@
                 class="border-solid border-2 border-amber-600 drop-shadow-md bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 ">
                 <form class="space-y-6">
                     <h1 style="color: red" class="font-bold text-3xl p-6">Add Students</h1>
+                    <div class="border-solid border-2 border-amber-600">
+                        <ul v-for="(error, index) in state.errorMessage" :key="index">
+                            <li>{{ error }}</li>
+                        </ul>
+                    </div>
                     <table>
 
                         <tr>
@@ -176,6 +181,7 @@ export default {
 <script setup lang="ts">
 
 let state = reactive({
+    errorMessage: [],
     students: [],
     filterArray: [],
     student: {
@@ -298,6 +304,9 @@ async function submitFormValues() {
             console.log("id", res.student_id);
             studId = res.student_id;
             relationalTableValues();
+        }).catch((error) => {
+            state.errorMessage = error.data.message;
+            console.log(state.errorMessage);
         })
 
     }
